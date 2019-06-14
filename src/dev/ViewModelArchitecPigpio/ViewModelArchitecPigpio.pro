@@ -6,7 +6,7 @@
 
 QT       += core gui
 
-greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
+ greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
 TARGET = ViewModelArchitecPigpio
 TEMPLATE = app
@@ -26,15 +26,37 @@ CONFIG += c++11
 
 SOURCES += \
         main.cpp \
+        model/cgpio.cpp \
+        model/cgpiomodel.cpp \
+        view/cgpioview.cpp \
         widget.cpp
 
 HEADERS += \
+        model/cgpio.h \
+        model/cgpiomodel.h \
+        view/cgpioview.h \
         widget.h
 
 FORMS += \
         widget.ui
 
+INCLUDEPATH += \
+    ./lib/include \
+    ./lib/include/pigpio \
+    ./view \
+    ./model
+
 # Default rules for deployment.
 qnx: target.path = /tmp/$${TARGET}/bin
-else: unix:!android: target.path = /opt/$${TARGET}/bin
+else: linux:{
+    target.path = /tmp/$${TARGET}/bin
+    LIBS += -lpthread \
+        -lpigpio
+}
+else: unix:!android:{
+    target.path = /opt/$${TARGET}/bin
+    LIBS += -lpthread \
+        -lpigpio
+}
+
 !isEmpty(target.path): INSTALLS += target
